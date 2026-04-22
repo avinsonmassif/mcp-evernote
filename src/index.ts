@@ -10,6 +10,7 @@ import { config } from 'dotenv';
 import { EvernoteOAuth } from './oauth.js';
 import { EvernoteAPI } from './evernote-api.js';
 import { EvernoteConfig } from './types.js';
+import { initEvertokenAuth, createEvertokenAPI } from './auth-evertoken.js';
 
 // Load environment variables
 config();
@@ -19,8 +20,10 @@ const CONSUMER_KEY = process.env.EVERNOTE_CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.EVERNOTE_CONSUMER_SECRET;
 const ENVIRONMENT = process.env.EVERNOTE_ENVIRONMENT || 'production';
 if (!CONSUMER_KEY || !CONSUMER_SECRET) {
-  console.error('Missing required environment variables: EVERNOTE_CONSUMER_KEY and EVERNOTE_CONSUMER_SECRET');
-  process.exit(1);
+  if (process.env.EVERNOTE_AUTH_MODE !== 'evertoken') {
+    console.error('Missing required environment variables: EVERNOTE_CONSUMER_KEY and EVERNOTE_CONSUMER_SECRET');
+    process.exit(1);
+  }
 }
 
 // Polling configuration
@@ -41,8 +44,8 @@ let pollErrorCount: number = 0;
 
 // Initialize Evernote configuration
 const evernoteConfig: EvernoteConfig = {
-  consumerKey: CONSUMER_KEY,
-  consumerSecret: CONSUMER_SECRET,
+  consumerKey: CONSUMER_KEY ?? '',
+  consumerSecret: CONSUMER_SECRET ?? '',
   sandbox: ENVIRONMENT === 'sandbox',
   china: false
 };
@@ -64,6 +67,10 @@ async function ensureAPI(forceReinit: boolean = false): Promise<EvernoteAPI> {
     lastInitAttempt = 0;
   }
   
+  if (process.env.EVERNOTE_AUTH_MODE === 'evertoken') {
+    return createEvertokenAPI();
+  }
+
   // If we have a working API, return it
   if (api) {
     return api;
@@ -1500,6 +1507,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             status: 'checking',
             apiInitialized: !!api,
             lastError: apiInitError,
+            ...(process.env.EVERNOTE_AUTH_MODE === 'evertoken' && { method: 'evertoken' }),
           },
         };
 
@@ -1751,6 +1759,10 @@ async function main() {
   console.error(`Polling: ${POLLING_ENABLED ? 'enabled' : 'disabled'} (interval: ${POLL_INTERVAL / 60000} min)`);
   if (WEBHOOK_URL) {
     console.error(`Webhook URL: ${WEBHOOK_URL}`);
+  }
+
+  if (process.env.EVERNOTE_AUTH_MODE === 'evertoken') {
+    await initEvertokenAuth();
   }
 
   const transport = new StdioServerTransport();

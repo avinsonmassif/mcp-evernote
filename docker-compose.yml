@@ -1,0 +1,39 @@
+services:
+  mcp-evernote:
+    build: .
+    image: mcp-evernote:latest
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+
+    # Pass all proxy flags here. entrypoint.sh appends "-- node /app/dist/index.js".
+    command:
+      - --password
+      - "${MCP_PASSWORD}"
+      - --external-url
+      - "${MCP_EXTERNAL_URL}"
+      - --tls-accept-tos
+
+    environment:
+      # ── Required: from "evertoken.exe new" on your Windows machine ───────────
+      EVERNOTE_SEED_NRT: "${EVERNOTE_SEED_NRT}"
+      EVERNOTE_SEED_NCI: "${EVERNOTE_SEED_NCI}"
+
+      # ── Required: generate once, keep stable across deployments ─────────────
+      # node -e "console.log(require('crypto').randomUUID())"
+      EVERNOTE_DEVICE_ID: "${EVERNOTE_DEVICE_ID}"
+
+      # ── Optional: device fingerprint defaults (override if needed) ───────────
+      # EVERNOTE_DEVICE_DESCRIPTION: mcp-evernote-docker
+      # EVERNOTE_APP_VERSION: "11.12.2"
+      # EVERNOTE_OS_PLATFORM: win32
+      # EVERNOTE_OS_RELEASE: "10.0"
+
+    volumes:
+      # state.json lives here — holds the rotating JWT refresh token.
+      # Losing this volume means the next start does a fresh token refresh
+      # using EVERNOTE_SEED_NRT, which works until that NRT has been rotated.
+      - evernote-state:/data/mcp-evernote
+
+volumes:
+  evernote-state:
