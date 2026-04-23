@@ -314,18 +314,14 @@ async function main() {
     console.log('1. Add the following to your Claude Desktop config:');
     console.log('   Location: ~/Library/Application Support/Claude/claude_desktop_config.json (macOS)');
     console.log('             %APPDATA%\\Claude\\claude_desktop_config.json (Windows)\n');
-    // Mask credentials in the example output for security
-    // lgtm[js/clear-text-logging] - credentials are intentionally masked before logging
-    const maskedKey = credentials.consumerKey.substring(0, 4) + '***';
-    const maskedSecret = '***' + credentials.consumerSecret.substring(credentials.consumerSecret.length - 4);
     console.log(JSON.stringify({
       mcpServers: {
         evernote: {
           command: "npx",
           args: ["@avinsonmassif/mcp-evernote"],
           env: {
-            EVERNOTE_CONSUMER_KEY: `${maskedKey} (use your actual key)`,
-            EVERNOTE_CONSUMER_SECRET: `${maskedSecret} (use your actual secret)`,
+            EVERNOTE_CONSUMER_KEY: "your-consumer-key",
+            EVERNOTE_CONSUMER_SECRET: "your-consumer-secret",
             EVERNOTE_ENVIRONMENT: credentials.environment
           }
         }
