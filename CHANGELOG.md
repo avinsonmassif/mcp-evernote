@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0](https://github.com/avinsonmassif/mcp-evernote/compare/mcp-evernote-v1.2.3...mcp-evernote-v1.3.0) (2026-04-23)
 
+
+### Features
+
+* add CI/CD, MCP Registry, and standardization ([b27df0c](https://github.com/avinsonmassif/mcp-evernote/commit/b27df0c7abf710c8ddf0ad4363ff0b34ae61cd32))
+* Add Claude Code support with automatic setup and OAuth integration ([42410db](https://github.com/avinsonmassif/mcp-evernote/commit/42410dbb12a5db21bdc7d5742709bc2c6ff16414))
+* add evertoken auth mode and Docker support ([035a762](https://github.com/avinsonmassif/mcp-evernote/commit/035a762eaff57686b93c1140047826e8b4878200))
+* Add interactive auth prompts and fix executable permissions ([5552395](https://github.com/avinsonmassif/mcp-evernote/commit/5552395c2565af5cd6b8d2b4792c1e7d49326ee5))
+* Add polling for Evernote changes with webhook notifications ([eea03b1](https://github.com/avinsonmassif/mcp-evernote/commit/eea03b12e4e7cdabc6fe937a57082cfcdac4c506))
+* Initial implementation of Evernote MCP server ([2b3463a](https://github.com/avinsonmassif/mcp-evernote/commit/2b3463ac0493b72fcc63110c9ce3f66701f9d53b))
+* publish to npm, fix postbuild for Windows, simplify Docker to use npx ([57aa364](https://github.com/avinsonmassif/mcp-evernote/commit/57aa3640d0c99c18a444cb6a7b389abc72d45163))
+* **search:** add metadata and content preview to search results ([07ecf6c](https://github.com/avinsonmassif/mcp-evernote/commit/07ecf6cb0228d5d9d2147b66253e14f1a7b1fca6))
+* **tools:** add evernote_patch_note for targeted find-and-replace edits ([f186076](https://github.com/avinsonmassif/mcp-evernote/commit/f186076ceb33c1f10cf7e8e0e5c8a97d55f5659b))
+
+
+### Bug Fixes
+
+* Add health check tool and improve error handling for MCP server stability ([0ed4c2b](https://github.com/avinsonmassif/mcp-evernote/commit/0ed4c2b6bd1a595b4ef505ae5ef8078572695fd3))
+* **auth:** token file compatibility + release hardening ([ecc9771](https://github.com/avinsonmassif/mcp-evernote/commit/ecc9771093063e15fbbe957ca4451c865b7a1f72))
+* **auth:** write token field; support legacy accessToken tokens ([6295537](https://github.com/avinsonmassif/mcp-evernote/commit/6295537b3a9d8274b18d6d27d8e4bd6e3ee4aac2))
+* **ci:** add npm environment for trusted publishing ([070a50f](https://github.com/avinsonmassif/mcp-evernote/commit/070a50ff020a1c4fb87fcb1cee21941f1bb5a663))
+* **ci:** use Node 24 for npm 11.5.1+ OIDC support ([88e0954](https://github.com/avinsonmassif/mcp-evernote/commit/88e09542dfa7e9a0df779376275b7138675616d0))
+* **ci:** use npm install instead of npm ci for cross-version compat ([5cedd64](https://github.com/avinsonmassif/mcp-evernote/commit/5cedd6485fcb78c60eee3f3f577a7a0788b8aab7))
+* **ci:** use NPM_TOKEN for npm publish instead of OIDC ([0b92266](https://github.com/avinsonmassif/mcp-evernote/commit/0b92266e4fe1944a4b548422ea6790dce216e9e6))
+* correct npm-publish workflow for OIDC trusted publishing ([7dc8a1f](https://github.com/avinsonmassif/mcp-evernote/commit/7dc8a1f9b6bd40d539daac63806a7aa485ceb0d0))
+* Fix ES module compatibility for Evernote SDK types ([5f0d3e5](https://github.com/avinsonmassif/mcp-evernote/commit/5f0d3e52bd130dbc4cda312db6b1b9e34f923217))
+* Separate OAuth flow for Claude Desktop compatibility ([cc9ae07](https://github.com/avinsonmassif/mcp-evernote/commit/cc9ae070b597ada38008303fbc70d67b03c73cb0))
+* **tests:** address CodeRabbit review comments ([9f4a089](https://github.com/avinsonmassif/mcp-evernote/commit/9f4a08987ec6c8ac854766c5972cabc81f17b171))
+* upgrade CodeQL Action to v4 ([4317881](https://github.com/avinsonmassif/mcp-evernote/commit/4317881f4aaebeda1f3b6429f95a7bd5f632e22e))
+
+## [1.3.0](https://github.com/avinsonmassif/mcp-evernote/compare/mcp-evernote-v1.2.3...mcp-evernote-v1.3.0) (2026-04-23)
+
 > Fork by [avinsonmassif](https://github.com/avinsonmassif) based on [verygoodplugins/mcp-evernote](https://github.com/verygoodplugins/mcp-evernote) v1.2.3.
 
 ### Features
