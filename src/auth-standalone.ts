@@ -322,7 +322,7 @@ async function main() {
       mcpServers: {
         evernote: {
           command: "npx",
-          args: ["@verygoodplugins/mcp-evernote"],
+          args: ["@avinsonmassif/mcp-evernote"],
           env: {
             EVERNOTE_CONSUMER_KEY: `${maskedKey} (use your actual key)`,
             EVERNOTE_CONSUMER_SECRET: `${maskedSecret} (use your actual secret)`,

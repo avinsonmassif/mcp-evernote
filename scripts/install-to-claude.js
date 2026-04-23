@@ -103,7 +103,7 @@ async function installToClaudeCode() {
   // Build the command arguments (separate from the executable for security)
   const serverCommand = env.isLocal
     ? `node ${join(process.cwd(), 'dist', 'index.js')}`
-    : 'npx @verygoodplugins/mcp-evernote';
+    : 'npx @avinsonmassif/mcp-evernote';
 
   // Validate the Claude Code command path to prevent command injection
   const claudeCommand = env.claudeCodeCommand;

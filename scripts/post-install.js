@@ -37,7 +37,7 @@ if (env.isClaudeCode) {
   console.log('1. Install Claude Code or Claude Desktop');
   console.log('2. Run: npm run setup');
   console.log('');
-  console.log('Learn more: https://github.com/verygoodplugins/mcp-evernote');
+  console.log('Learn more: https://github.com/avinsonmassif/mcp-evernote');
 }
 
 console.log('');

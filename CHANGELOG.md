@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0](https://github.com/avinsonmassif/mcp-evernote/compare/mcp-evernote-v1.2.3...mcp-evernote-v1.3.0) (2026-04-23)
+
+> Fork by [avinsonmassif](https://github.com/avinsonmassif) based on [verygoodplugins/mcp-evernote](https://github.com/verygoodplugins/mcp-evernote) v1.2.3.
+
+### Features
+
+* **auth:** add evertoken auth mode for token-based authentication without OAuth ([035a762](https://github.com/avinsonmassif/mcp-evernote/commit/035a762))
+* **docker:** add Docker support with Dockerfile and docker-compose configuration ([035a762](https://github.com/avinsonmassif/mcp-evernote/commit/035a762))
+* **ci:** add Docker publish workflow to GitHub Container Registry (ghcr.io) ([5a5fddd](https://github.com/avinsonmassif/mcp-evernote/commit/5a5fddd))
+
+### Bug Fixes
+
+* **build:** fix postbuild script for Windows compatibility ([57aa364](https://github.com/avinsonmassif/mcp-evernote/commit/57aa364))
+* **docker:** simplify Docker to use npx for cleaner image ([57aa364](https://github.com/avinsonmassif/mcp-evernote/commit/57aa364))
+
+### Documentation
+
+* update README with evertoken auth mode instructions ([f4f94c7](https://github.com/avinsonmassif/mcp-evernote/commit/f4f94c7))
+
+---
+
 ## [1.2.3](https://github.com/verygoodplugins/mcp-evernote/compare/mcp-evernote-v1.2.2...mcp-evernote-v1.2.3) (2026-01-21)
 
 

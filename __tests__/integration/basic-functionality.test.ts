@@ -11,7 +11,7 @@ describe('Basic Functionality Tests', () => {
   it('should verify package configuration', () => {
     const packageJson = require('../../package.json');
     
-    expect(packageJson.name).toBe('@verygoodplugins/mcp-evernote');
+    expect(packageJson.name).toBe('@avinsonmassif/mcp-evernote');
     expect(packageJson.main).toBe('dist/index.js');
     expect(packageJson.scripts.test).toBe('jest');
     expect(packageJson.devDependencies.jest).toBeDefined();

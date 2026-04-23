@@ -89,7 +89,7 @@ export function getRecommendedSetup(env) {
     return {
       method: 'claude-code',
       description: 'Claude Code is installed',
-      instructions: `Run: ${env.claudeCodeCommand} mcp add evernote "npx @verygoodplugins/mcp-evernote"`
+      instructions: `Run: ${env.claudeCodeCommand} mcp add evernote "npx @avinsonmassif/mcp-evernote"`
     };
   }
 
