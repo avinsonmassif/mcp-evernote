@@ -16,7 +16,7 @@
 #
 # npm Publishing:
 #   Uses Trusted Publishing (OIDC) - no NPM_TOKEN needed!
-#   Configured at: https://www.npmjs.com/package/@verygoodplugins/mcp-evernote/access
+#   Configured at: https://www.npmjs.com/package/@avinsonmassif/mcp-evernote/access
 #   Workflow filename registered: release-please.yml
 
 name: Release Please
