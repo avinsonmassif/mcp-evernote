@@ -5,6 +5,10 @@
 
 A Model Context Protocol (MCP) server that provides seamless integration with Evernote for note management, organization, and knowledge capture. Works with both Claude Code and Claude Desktop.
 
+> **This is a fork of [verygoodplugins/mcp-evernote](https://github.com/verygoodplugins/mcp-evernote)** with two additions:
+> - **Evertoken auth mode** — authenticate without an Evernote developer key using tokens extracted from the Evernote desktop app via [evertoken](https://github.com/vzhd1701/evertoken)
+> - **Docker deployment** — run the server in a container behind [mcp-auth-proxy](https://github.com/sigbit/mcp-auth-proxy)
+
 ## Installation Requirements
 
 ### For Claude Desktop Users:
@@ -288,6 +292,63 @@ EVERNOTE_NOTESTORE_URL=your-notestore-url
   }
 }
 ```
+
+### 5. Evertoken (No Developer Key Required)
+
+Evernote stopped issuing new API developer keys. If you can't obtain a `CONSUMER_KEY` / `CONSUMER_SECRET`, use **evertoken mode** instead. It extracts a valid token directly from the Evernote desktop app's local encrypted storage — no developer key needed.
+
+#### Prerequisites
+
+1. Install the [Evernote desktop app](https://evernote.com/download) on Windows and sign in
+2. Download [evertoken](https://github.com/vzhd1701/evertoken) for Windows ([releases](https://github.com/vzhd1701/evertoken/releases))
+
+#### Extract your tokens
+
+```powershell
+.\evertoken.exe new
+```
+
+Copy the **Refresh Token (JWT)** and **Client ID** values from the output.
+
+#### Configure
+
+```json
+{
+  "mcpServers": {
+    "evernote": {
+      "command": "node",
+      "args": ["/path/to/mcp-evernote/dist/index.js"],
+      "env": {
+        "EVERNOTE_AUTH_MODE": "evertoken",
+        "EVERNOTE_SEED_NRT": "<Refresh Token (JWT)>",
+        "EVERNOTE_SEED_NCI": "<Client ID>",
+        "EVERNOTE_DEVICE_ID": "<generate once: node -e \"console.log(require('crypto').randomUUID())\">"
+      }
+    }
+  }
+}
+```
+
+#### Environment variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `EVERNOTE_AUTH_MODE` | Yes | — | Set to `evertoken` to activate this mode |
+| `EVERNOTE_SEED_NRT` | Yes* | — | JWT refresh token from `evertoken.exe new` |
+| `EVERNOTE_SEED_NCI` | Yes* | — | Client ID from `evertoken.exe new` |
+| `EVERNOTE_DEVICE_ID` | Yes | — | Stable UUID — generate once, keep forever |
+| `EVERNOTE_DEVICE_DESCRIPTION` | No | `mcp-evernote` | Arbitrary label for this client |
+| `EVERNOTE_APP_VERSION` | No | `11.12.2` | Evernote desktop version to present |
+| `EVERNOTE_OS_PLATFORM` | No | `win32` | OS platform string |
+| `EVERNOTE_OS_RELEASE` | No | `10.0` | OS release string |
+| `MCP_EVERNOTE_SEED_PATH` | No | `~/.config/mcp-evernote-evertoken/seed.json` | Path to seed JSON file (alternative to env vars) |
+| `MCP_EVERNOTE_STATE_PATH` | No | `~/.config/mcp-evernote-evertoken/state.json` | Path to persisted token state |
+
+*Can alternatively be stored in a JSON file at `MCP_EVERNOTE_SEED_PATH` with `{ "nrt": "...", "nci": "..." }`.
+
+#### Token rotation and persistence
+
+The JWT refresh token rotates on every use. The current token is saved to `state.json` (`MCP_EVERNOTE_STATE_PATH`). If that file is lost, the server will attempt a fresh refresh using the original `EVERNOTE_SEED_NRT` — this works until that token has itself been rotated out. For Docker deployments, always mount a volume for the state path (see below).
 
 ## Available Tools
 
@@ -586,6 +647,80 @@ Evernote API has rate limits. If you encounter limits:
 - Reduce the frequency of requests
 - Use batch operations where possible
 - Implement caching for frequently accessed data
+
+## Docker Deployment
+
+Run the server in a Docker container behind [mcp-auth-proxy](https://github.com/sigbit/mcp-auth-proxy), which handles HTTPS and authentication for you. This is the recommended approach for self-hosted setups — no Evernote developer key required.
+
+### Prerequisites
+
+- Docker + Docker Compose
+- Evernote desktop app on Windows (to run `evertoken.exe` once)
+- [evertoken](https://github.com/vzhd1701/evertoken) ([releases](https://github.com/vzhd1701/evertoken/releases))
+
+### 1. Extract your tokens (Windows, one-time)
+
+```powershell
+.\evertoken.exe new
+```
+
+Copy **Refresh Token (JWT)** → `EVERNOTE_SEED_NRT` and **Client ID** → `EVERNOTE_SEED_NCI`.
+
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Fill in your `.env`:
+
+```env
+# mcp-auth-proxy
+MCP_PASSWORD=your-strong-password
+MCP_EXTERNAL_URL=https://mcp-evernote.yourdomain.com
+
+# Evertoken seed (from evertoken.exe new)
+EVERNOTE_SEED_NRT=eyJ...
+EVERNOTE_SEED_NCI=3FE74DA6-...
+
+# Device ID — generate once, keep stable
+# node -e "console.log(require('crypto').randomUUID())"
+EVERNOTE_DEVICE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+### 3. Build and run
+
+```bash
+docker compose up -d --build
+```
+
+The Dockerfile builds both mcp-auth-proxy (from source) and mcp-evernote in a single image. The entrypoint wrapper passes your `docker compose command:` flags to the proxy and appends `-- node /app/dist/index.js` automatically.
+
+### 4. Connect your MCP client
+
+Point your Claude Desktop or Claude Code config at the proxy URL:
+
+```json
+{
+  "mcpServers": {
+    "evernote": {
+      "type": "sse",
+      "url": "https://mcp-evernote.yourdomain.com/sse",
+      "headers": {
+        "Authorization": "Bearer your-strong-password"
+      }
+    }
+  }
+}
+```
+
+### State persistence
+
+The rotating JWT refresh token is saved to `/data/mcp-evernote/state.json` inside the container. The `docker-compose.yml` mounts a named volume (`evernote-state`) at that path so the token survives container restarts and image upgrades.
+
+> If the volume is lost, the server recovers automatically on next start using `EVERNOTE_SEED_NRT` — as long as that token hasn't been rotated out since the volume was last written.
+
+---
 
 ## Development
 
