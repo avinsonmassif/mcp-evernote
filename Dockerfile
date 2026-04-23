@@ -5,28 +5,13 @@ WORKDIR /src/proxy
 RUN git clone --depth 1 https://github.com/sigbit/mcp-auth-proxy.git .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /out/mcp-auth-proxy .
 
-# ── Stage 2: build mcp-evernote ───────────────────────────────────────────────
-FROM node:20-alpine AS node-builder
-
-WORKDIR /build
-COPY package*.json ./
-RUN npm install
-COPY tsconfig.json ./
-COPY src/ ./src/
-RUN ./node_modules/.bin/tsc
-
-# ── Stage 3: runtime ──────────────────────────────────────────────────────────
+# ── Stage 2: runtime ──────────────────────────────────────────────────────────
+# mcp-evernote is pulled at runtime via npx — no build stage needed.
 FROM node:20-bookworm-slim
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates \
     && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-COPY --from=node-builder /build/dist          ./dist
-COPY --from=node-builder /build/node_modules  ./node_modules
-COPY --from=node-builder /build/package.json  ./package.json
 
 COPY --from=proxy-builder /out/mcp-auth-proxy /usr/local/bin/mcp-auth-proxy
 
@@ -52,6 +37,6 @@ ENV EVERNOTE_AUTH_MODE=evertoken \
 # mcp-auth-proxy default port
 EXPOSE 9090
 
-# entrypoint.sh appends "-- node /app/dist/index.js" so you only need to
-# pass the proxy flags (--password, --external-url, etc.) to docker run / CMD.
+# entrypoint.sh appends "-- npx -y @avinsonmassif/mcp-evernote" so you only
+# need to pass the proxy flags (--password, --external-url, etc.) at runtime.
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
